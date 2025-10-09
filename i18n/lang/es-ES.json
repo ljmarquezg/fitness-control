@@ -1,0 +1,114 @@
+{
+  "login": {
+    "title": "Iniciar Sesión",
+    "description": "Ingresa tus credenciales para acceder a tu cuenta.",
+    "form": {
+      "email_label": "Correo electrónico",
+      "password_label": "Contraseña",
+      "button": "Acceder"
+    },
+    "no_account": "¿No tienes una cuenta?",
+    "register_link": "Regístrate"
+  },
+  "register": {
+    "title": "Crear Cuenta",
+    "description": "Únete a nuestra comunidad en segundos. ¡Es gratis!",
+    "form": {
+      "first_name_label": "Nombre",
+      "last_name_label": "Apellido",
+      "email_label": "Correo electrónico",
+      "password_label": "Contraseña",
+      "button": "Registrarse"
+    },
+    "have_account": "¿Ya tienes una cuenta?",
+    "login_link": "Inicia sesión",
+    "success": {
+      "title": "Bienvenido {firstName} {lastName}",
+      "message": "Tu cuenta y perfil han sido creados exitosamente."
+    },
+    "error": {
+      "title": "Error de Registro",
+      "message": "Falló el registro. Por favor, revisa tus datos o inténtalo más tarde."
+    },
+    "navigationLabel": "Registrarse"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Resumen tu actividad reciente.",
+    "newRecord": "Agregar registro",
+    "navigationLabel": "Dashboard"
+  },
+  "reports": {
+    "navigationLabel": "Reportes"
+  },
+  "measurements": {
+    "title": "Measurements",
+    "description": "Update your body measurements",
+    "add_new": "Add new measurement",
+    "view_history": "View history",
+    "latest": "Latest measurement",
+    "no_data": "No measurements recorded yet.",
+    "date": "Date",
+    "bmi": "BMI",
+    "weight": "Weight",
+    "waist": "Waist",
+    "hip": "Hip",
+    "chest": "Chest",
+    "muscle_mass": "Muscle Mass",
+    "body_fat": "Body Fat",
+    "body_water": "Body Water",
+    "bone_mass": "Bone Mass",
+    "height": "Height",
+    "age": "Age",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm_delete": "Are you sure you want to delete this measurement?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "cm": "cm",
+    "kg": "kg",
+    "lbs": "libras",
+    "inches": "pulgadas",
+    "ft": "pie",
+    "m": "m",
+    "bmi_categories": {
+      "underweight": "Peso bajo",
+      "normal_weight": "Peso normal",
+      "overweight": "Sobrepeso",
+      "obesity": "Obesidad"
+    }
+  },
+  "profile": {
+    "personalInformation": {
+      "title": "Personal Information",
+      "description": "Actualice la información necesaria"
+    },
+    "bodyInformation": {
+      "title": "Body Information",
+      "description": "Actualice sus medidas corporales"
+    },
+    "title": "Perfíl",
+    "form": {
+      "first_name_label": "First Name",
+      "last_name_label": "Last Name",
+      "email_label": "Email",
+      "age_label": "Edad",
+      "years": "años",
+      "years_old": "Tu edad",
+      "height_label": "Altura",
+      "weight_label": "Peso",
+      "bmi_label": "MCI",
+      "waist_label": "Cadera",
+      "hip_label": "Cintura",
+      "chest_label": "Pecho",
+      "muscle_mass_label": "Masa Muscular",
+      "body_fat_label": "Grasa Corporal",
+      "body_water_label": "Agua Corporal",
+      "bone_mass_label": "Masa Ósea",
+      "password_label": "Password",
+      "button": "Update"
+    },
+    "navigationLabel": "Profile"
+  }
+}
