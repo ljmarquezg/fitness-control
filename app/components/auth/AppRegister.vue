@@ -17,9 +17,10 @@ const state = reactive<Partial<UserRegisterFormSchema>>({
   password: ''
 });
 
-const toast = useNotifications();
+const notifications = useNotifications();
 
 async function onSubmit(event: FormSubmitEvent<UserRegisterFormSchema>) {
+  const { t } = useI18n();
   const {
     firstName,
     lastName,
@@ -33,16 +34,10 @@ async function onSubmit(event: FormSubmitEvent<UserRegisterFormSchema>) {
     const userCredential = await auth.register(email, password);
 
     if (userCredential) {
-      updateProfile(userCredential, {
+      await updateProfile(userCredential, {
         displayName: `${firstName} ${lastName}`,
         photoURL: 'https://example.com/avatar.png'
-      })
-          .then(() => {
-            console.log('Perfil actualizado con éxito!');
-          })
-          .catch((error) => {
-            console.error('Error actualizando perfil:', error);
-          });
+      });
 
       const db = useFirebase().db;
 
@@ -53,12 +48,12 @@ async function onSubmit(event: FormSubmitEvent<UserRegisterFormSchema>) {
         createdAt: new Date().toISOString()
       });
 
-      toast.success(`Welcome ${firstName} ${lastName}`, 'Your account and profile created successfully.');
+      notifications.success(`Welcome ${firstName} ${lastName}`, t('register.success_description'));
 
     }
   } catch (error) {
-    console.log(error);
-    toast.error('Error', 'Failed to login. Please check your credentials.');
+    console.error('Failed to login', error);
+    notifications.error(t('register.error_title'), t('register.error_description'));
     return;
   }
 }

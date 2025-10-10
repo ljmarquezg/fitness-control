@@ -60,3 +60,11 @@ export default defineAppConfig({
     },
   }
 })
+
+export const toasterConfiguration = {
+  position: 'bottom-right',
+  expand: true,
+  duration: 5000,
+  hoverPause: true,
+  progress: true
+};

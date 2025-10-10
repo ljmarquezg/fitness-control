@@ -3,13 +3,11 @@
     lang="ts"
 >
 import type { FormSubmitEvent } from '@nuxt/ui';
+import { useAppUserState } from '~/composables/state/useAppUserState';
 import { updateUserProfileFormSchema, type UpdateUserProfileFormSchema, type UserFormSchema } from '~/schemas/profile/UserProfileSchema';
 
-const { currentUser, updateCurrentUserState } = useAuth();
-const {
-  isLoadingProfile,
-  updateUserProfile,
-} = useUserProfile();
+const { userProfile } = useAppUserState();
+const { updateUserProfile } = useUserProfile();
 const emit = defineEmits(['saved']);
 
 const {
@@ -23,7 +21,7 @@ const {
   hip,
   waist,
   muscle
-} = currentUser.value;
+} = userProfile.value;
 
 const ui = {
   root: 'relative flex flex-col relative w-24 h-24 rounded-full',
@@ -53,8 +51,7 @@ const stateUserForm = reactive<Partial<UpdateUserProfileFormSchema>>({
 });
 
 async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
-  await updateUserProfile(event.data).then((response) => {
-    updateCurrentUserState(response);
+  await updateUserProfile(event.data).then(() => {
     emit('saved');
   });
 }
@@ -130,7 +127,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.years_old')"
             :trailing="true"
             trailing-label="profile.form.years"
-            :value="currentUser.age"
+            :value="userProfile.age"
         />
 
         <AppStatCard
@@ -142,7 +139,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.height_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="currentUser.age"
+            :value="userProfile.age"
         />
 
         <AppStatCard
@@ -154,7 +151,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.weight_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="currentUser.weight"
+            :value="userProfile.weight"
         />
 
         <AppStatCard
@@ -166,7 +163,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.bmi_label')"
             :trailing="true"
             trailing-label="measurements.kg"
-            :value="currentUser.muscle"
+            :value="userProfile.muscle"
         />
       </div>
 
@@ -188,7 +185,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.chest_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="currentUser.chest"
+              :value="userProfile.chest"
           />
 
           <AppStatCard
@@ -200,7 +197,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.hip_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="currentUser.hip"
+              :value="userProfile.hip"
           />
 
           <AppStatCard
@@ -212,7 +209,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.waist_label')"
               :trailing="true"
               trailing-label="measurements.kg"
-              :value="currentUser.waist"
+              :value="userProfile.waist"
           />
         </div>
 

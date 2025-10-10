@@ -7,14 +7,36 @@
   },
   "login": {
     "description": "Ingresa tus credenciales para acceder a tu cuenta.",
+    "error": {
+      "message": "Falló el inicio de sesión. Por favor, revisa tus datos o inténtalo más tarde.",
+      "title": "Error de Inicio de Sesión"
+    },
     "form": {
       "button": "Acceder",
       "email_label": "Correo electrónico",
       "password_label": "Contraseña"
     },
+    "navigationLabel": "Iniciar Sesión",
     "no_account": "¿No tienes una cuenta?",
     "register_link": "Regístrate",
+    "success": {
+      "message": "Has iniciado sesión exitosamente.",
+      "title": "¡Bienvenido de nuevo!"
+    },
     "title": "Iniciar Sesión"
+  },
+  "logout": {
+    "description": "Has cerrado sesión.",
+    "error": {
+      "message": "Falló el cierre de sesión. Por favor, inténtalo más tarde.",
+      "title": "Error al Cerrar Sesión"
+    },
+    "navigationLabel": "Cerrar Sesión",
+    "success": {
+      "message": "Has cerrado sesión exitosamente.",
+      "title": "¡Adiós!"
+    },
+    "title": "Sesión Cerrada"
   },
   "measurements": {
     "actions": "Acciones",
@@ -86,8 +108,8 @@
       "title": "Información Personal"
     },
     "title": "Perfíl",
-    "updateSuccess": "Perfil actualizado exitosamente.",
-    "updateError": "Error al actualizar el perfil. Por favor, inténtalo de nuevo."
+    "updateError": "Error al actualizar el perfil. Por favor, inténtalo de nuevo.",
+    "updateSuccess": "Perfil actualizado exitosamente."
   },
   "register": {
     "description": "Únete a nuestra comunidad en segundos. ¡Es gratis!",

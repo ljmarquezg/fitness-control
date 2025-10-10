@@ -1,14 +1,18 @@
-import { EmailAuthProvider, reauthenticateWithCredential, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
+import { EmailAuthProvider, reauthenticateWithCredential, updateProfile, type User, verifyBeforeUpdateEmail } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAppUserState } from '~/composables/state/useAppUserState';
 import { useFirebase } from '~/composables/useFirebase';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 
 export const useUserProfile = () => {
   const { db } = useFirebase();
+  const {
+    currentUser,
+    updateCurrentUserState,
+    clearCurrentUser,
+  } = useAppUserState();
   const toast = useNotifications();
-  const profileData = useState<Record<string, any>>('profileData', () => ({}));
   const isLoadingProfile = useState<boolean>('isLoadingProfile', () => false);
-  let user = null;
 
   /**
    * Fetches the user profile from Firestore and updates the local state.
@@ -18,16 +22,14 @@ export const useUserProfile = () => {
    * @function fetchUserProfile
    * @returns {Promise<void>} Resolves when the profile is fetched or initialized.
    */
-  const fetchUserProfile = async (currentUser): Promise<UserProfileData> => {
-    // Esperar a que currentUser esté disponible
-    if (!currentUser) {
-      console.warn('⏳ Esperando autenticación...');
+  const fetchUserProfile = async (): Promise<UserProfileData> => {
+    const user: User | UserProfileData = currentUser.value;
+
+    if (!user) {
       return;
     }
-
-    user = currentUser;
-    console.log('Fetching user profile...', user.uid);
     isLoadingProfile.value = true;
+
     try {
       const uid: string | undefined = user.uid;
       const docRef = doc(db, 'users', uid);
@@ -39,12 +41,13 @@ export const useUserProfile = () => {
           snapData['displayName'] = user.displayName || `${snapData?.firstName} ${snapData?.lastName}`;
         }
 
-        user = {
+        const userProfile = {
           photoUrl: user?.photoURL,
           ...snapData
         };
-        
-        return user;
+
+        updateCurrentUserState(userProfile);
+        return userProfile;
       } else {
         console.log('📝 No profile found for user:', uid);
         toast.info('No se encontró perfil, creando uno nuevo...');
@@ -95,7 +98,7 @@ export const useUserProfile = () => {
       await reauthenticateWithCredential(user, credential);
 
       await verifyBeforeUpdateEmail(user, newEmail);
-      await profileData?.value?.reload();
+      await currentUser?.value?.reload();
       toast.success('Correo actualizado correctamente');
     } catch (error) {
       toast.error('Error actualizando el correo:', error);
@@ -114,6 +117,7 @@ export const useUserProfile = () => {
    */
   const updateUserProfile = async (data: Record<string, any>): Promise<UserProfileData> => {
     isLoadingProfile.value = true;
+    const user: User | UserProfileData = currentUser.value;
     try {
       if (!user) throw new Error('No user logged in');
 
@@ -136,19 +140,20 @@ export const useUserProfile = () => {
       }, { merge: true });
 
       // 3️⃣ Local state
-      user.value = { ...user.value, ...cleanData };
-      toast.success('profile.updateSuccess');
+      updateCurrentUserState({ ...user.value, ...cleanData });
       return user;
 
     } catch (error) {
       console.error('❌ Error actualizando perfil:', error);
       toast.error('Error actualizando el perfil');
       throw error;
+    } finally {
+      isLoadingProfile.value = false;
     }
   };
 
   const clearProfile = () => {
-    profileData.value = null;
+    clearCurrentUser(null);
     console.log('🧹 Profile data cleared');
   };
 

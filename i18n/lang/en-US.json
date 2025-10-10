@@ -7,6 +7,10 @@
   },
   "login": {
     "description": "Enter your credentials to access your account.",
+    "error": {
+      "message": "Login failed. Please check your credentials or try again later.",
+      "title": "Login Error"
+    },
     "form": {
       "button": "Sign In",
       "email_label": "Email",
@@ -15,7 +19,24 @@
     "navigationLabel": "Login",
     "no_account": "Don't have an account?",
     "register_link": "Register",
+    "success": {
+      "message": "You have successfully logged in.",
+      "title": "Welcome back!"
+    },
     "title": "Log In"
+  },
+  "logout": {
+    "description": "You have been logged out.",
+    "error": {
+      "message": "Logout failed. Please try again later.",
+      "title": "Logout Error"
+    },
+    "navigationLabel": "Logout",
+    "success": {
+      "message": "You have successfully logged out.",
+      "title": "Goodbye!"
+    },
+    "title": "Logged Out"
   },
   "measurements": {
     "actions": "Actions",

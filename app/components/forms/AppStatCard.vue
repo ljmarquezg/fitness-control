@@ -8,7 +8,7 @@ const props = defineProps<{
   editing?: boolean;
   isLoading?: boolean;
   modelValue?;
-  label: string;
+  label?: string;
   placeholder?: string;
   trailing?: boolean;
   trailingLabel?: string | number;

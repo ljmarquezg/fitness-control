@@ -2,10 +2,12 @@
     setup
     lang="ts"
 >
-const { currentUser } = useAuth();
+import { useAppUserState } from '~/composables/state/useAppUserState';
+
+const { userProfile } = useAppUserState();
 const { isLoadingProfile } = useUserProfile();
 const state = ref({ editing: false });
-const isLoading = computed(() => !currentUser?.value || state.value.loading || isLoadingProfile.value);
+const isLoading = computed(() => !userProfile?.value || isLoadingProfile.value);
 </script>
 
 <template>
@@ -37,12 +39,12 @@ const isLoading = computed(() => !currentUser?.value || state.value.loading || i
             </div>
           </div>
           <div class="text-center sm:text-left">
-            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white mb-1">{{ currentUser?.displayName }}</h1>
+            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white mb-1">{{ userProfile?.displayName }}</h1>
             <p class="text-base text-gray-500 dark:text-gray-400 mt-2">
               <ULink
-                  :href="`mailto:${currentUser?.email}`"
+                  :href="`mailto:${userProfile?.email}`"
                   target="_blank"
-              >{{ currentUser?.email }}
+              >{{ userProfile?.email }}
               </ULink>
             </p>
           </div>
@@ -58,7 +60,7 @@ const isLoading = computed(() => !currentUser?.value || state.value.loading || i
             color="bg-blue-500/10 text-blue-500 dark:bg-blue dark:text-blue-500"
             icon="i-lucide-cake"
             label="profile.form.age_label"
-            :value="currentUser?.age"
+            :value="userProfile?.age"
             :unit="$t('profile.form.years')"
             :isLoading="isLoading"
         />
@@ -67,7 +69,7 @@ const isLoading = computed(() => !currentUser?.value || state.value.loading || i
             color="bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-500"
             icon="i-lucide-ruler"
             label="profile.form.height_label"
-            :value="currentUser?.height"
+            :value="userProfile?.height"
             :unit="$t('measurements.cm')"
             :isLoading="isLoading"
         />
@@ -76,7 +78,7 @@ const isLoading = computed(() => !currentUser?.value || state.value.loading || i
             color="bg-teal-500/10 text-teal-500 dark:bg-teal/10 dark:text-teal-500"
             icon="i-heroicons-scale"
             label="profile.form.weight_label"
-            :value="currentUser?.weight"
+            :value="userProfile?.weight"
             :unit="$t('measurements.kg')"
             :isLoading="isLoading"
         />
@@ -85,7 +87,7 @@ const isLoading = computed(() => !currentUser?.value || state.value.loading || i
             color="bg-orange-500/10 text-orange-500 dark:bg-orange-300/10 dark:text-orange"
             icon="i-heroicons-user"
             label="profile.form.muscle_mass_label"
-            :value="currentUser?.muscle_mass"
+            :value="userProfile?.muscle_mass"
             :unit="$t('measurements.kg')"
             :isLoading="isLoading"
         />
