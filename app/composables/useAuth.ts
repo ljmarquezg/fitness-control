@@ -1,18 +1,25 @@
 import type { User } from 'firebase/auth';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 import { useFirebase } from './useFirebase';
 
 const initializeAuthState = (auth: any) => {
-  const currentUser = useState<User | null>('currentUser', () => null);
+  const currentUser = useState<User | UserProfileData>('currentUser', () => null);
+  // const profileData = useState<Record<string, UserProfileData> | null>('profileData', () => null);
+  const { fetchUserProfile } = useUserProfile();
   const isLoggedIn = computed(() => !!currentUser.value);
-
   // 🔹 Watch auth changes once globally
   if (process.client) {
     // Escucha cambios en el estado de autenticación
-    onAuthStateChanged(auth, (user) => {
-      currentUser.value = user;
-      console.log(user);
-      // isLoggedIn.value = !!user; // true si hay un usuario logueado, false si es null
+    onAuthStateChanged(auth, async (user) => {
+      console.log('🔄 Auth state changed. User:', user ? user.email : 'No user');
+      if (user) {
+        // currentUser.value = user;
+        currentUser.value = await fetchUserProfile(user);
+        console.log(currentUser);
+      } else {
+        currentUser.value = null;
+      }
     });
   }
 
@@ -28,6 +35,7 @@ export const useAuth = () => {
     currentUser,
     isLoggedIn
   } = initializeAuthState(auth);
+  const isLoading = ref(false);
 
   const notification = useNotifications();
 
@@ -55,6 +63,7 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       await signOut(auth);
+      currentUser.value = null;
       console.log('✅ User logged out');
     } catch (error) {
       console.error('❌ Error logging out:', error);
@@ -66,12 +75,17 @@ export const useAuth = () => {
     return onAuthStateChanged(auth, callback);
   };
 
+  const updateCurrentUserState = (user: UserProfileData | null): void => {
+    currentUser.value = user;
+  }
+
   return {
     currentUser,
     isLoggedIn,
     login,
     register,
     logout,
-    onAuthChanged
+    onAuthChanged,
+    updateCurrentUserState
   };
 };

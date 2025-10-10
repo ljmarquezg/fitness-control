@@ -2,14 +2,10 @@
     setup
     lang="ts"
 >
-
-const userProfile = useUserProfile();
-const profileData = userProfile.profileData;
-const isLoading = userProfile.isLoadingProfile;
-const state = ref({
-  editing: false,
-  loading: false,
-});
+const { currentUser } = useAuth();
+const { isLoadingProfile } = useUserProfile();
+const state = ref({ editing: false });
+const isLoading = computed(() => !currentUser?.value || state.value.loading || isLoadingProfile.value);
 </script>
 
 <template>
@@ -41,12 +37,12 @@ const state = ref({
             </div>
           </div>
           <div class="text-center sm:text-left">
-            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white mb-1">{{ profileData?.displayName }}</h1>
+            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white mb-1">{{ currentUser?.displayName }}</h1>
             <p class="text-base text-gray-500 dark:text-gray-400 mt-2">
               <ULink
-                  :href="`mailto:${profileData?.email}`"
+                  :href="`mailto:${currentUser?.email}`"
                   target="_blank"
-              >{{ profileData?.email }}
+              >{{ currentUser?.email }}
               </ULink>
             </p>
           </div>
@@ -54,40 +50,44 @@ const state = ref({
       </div>
     </UCard>
     <div class="mb-8">
-      <div class="flex items-center gap-2 mb-4">
-        <h2 class="text-2xl font-bold">Métricas de Salud</h2>
+      <div class="flex items-center gap-2 my-4">
+        <h2 class="text-2xl font-bold">{{ $t('profile.health_info') }}</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <AppStatCard
             color="bg-blue-500/10 text-blue-500 dark:bg-blue dark:text-blue-500"
             icon="i-lucide-cake"
             label="profile.form.age_label"
-            :value="profileData.age"
+            :value="currentUser?.age"
             :unit="$t('profile.form.years')"
+            :isLoading="isLoading"
         />
 
         <AppStatCard
             color="bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-500"
             icon="i-lucide-ruler"
             label="profile.form.height_label"
-            :value="profileData.height"
+            :value="currentUser?.height"
             :unit="$t('measurements.cm')"
+            :isLoading="isLoading"
         />
 
         <AppStatCard
             color="bg-teal-500/10 text-teal-500 dark:bg-teal/10 dark:text-teal-500"
             icon="i-heroicons-scale"
             label="profile.form.weight_label"
-            :value="profileData.weight"
+            :value="currentUser?.weight"
             :unit="$t('measurements.kg')"
+            :isLoading="isLoading"
         />
 
         <AppStatCard
             color="bg-orange-500/10 text-orange-500 dark:bg-orange-300/10 dark:text-orange"
             icon="i-heroicons-user"
             label="profile.form.muscle_mass_label"
-            :value="profileData.muscle_mass"
+            :value="currentUser?.muscle_mass"
             :unit="$t('measurements.kg')"
+            :isLoading="isLoading"
         />
       </div>
     </div>

@@ -1,4 +1,17 @@
+import type { UserInfo } from '@firebase/auth';
 import * as z from 'zod';
+
+export interface UserProfileData extends UserInfo {
+  firstName?: string;
+  lastName?: string;
+  age: number;
+  chest?: number;
+  height?: number;
+  hip?: number;
+  muscle?: number;
+  weight?: number;
+  waist?: number;
+}
 
 export const userLoginFormSchema = z.object({
   email: z.email('Invalid email'),
@@ -28,7 +41,8 @@ export const userProfileFormSchema = z.object({
   }
 );
 
-export const updateUserProfileFormSchema = userFormSchema.merge(userProfileFormSchema);;
+export const updateUserProfileFormSchema = userFormSchema.merge(userProfileFormSchema);
+;
 
 export type UserLoginFormSchema = z.output<typeof userLoginFormSchema>
 export type UserRegisterFormSchema = z.output<typeof userRegisterFormSchema>

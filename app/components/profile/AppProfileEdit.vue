@@ -5,11 +5,12 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { updateUserProfileFormSchema, type UpdateUserProfileFormSchema, type UserFormSchema } from '~/schemas/profile/UserProfileSchema';
 
-const userProfile = useUserProfile();
-const profileData = userProfile.profileData;
-const isLoading = userProfile.isLoadingProfile;
+const { currentUser, updateCurrentUserState } = useAuth();
+const {
+  isLoadingProfile,
+  updateUserProfile,
+} = useUserProfile();
 const emit = defineEmits(['saved']);
-const toast = useNotifications();
 
 const {
   firstName,
@@ -22,7 +23,7 @@ const {
   hip,
   waist,
   muscle
-} = profileData.value;
+} = currentUser.value;
 
 const ui = {
   root: 'relative flex flex-col relative w-24 h-24 rounded-full',
@@ -52,15 +53,10 @@ const stateUserForm = reactive<Partial<UpdateUserProfileFormSchema>>({
 });
 
 async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
-  try {
-    await userProfile.updateUser(event.data);
-    toast.success('Success', 'Profile updated successfully.');
+  await updateUserProfile(event.data).then((response) => {
+    updateCurrentUserState(response);
     emit('saved');
-  } catch (error) {
-    console.log(error);
-    toast.error('Error', 'Failed to login. Please check your credentials.');
-    return;
-  }
+  });
 }
 </script>
 
@@ -134,7 +130,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.years_old')"
             :trailing="true"
             trailing-label="profile.form.years"
-            :value="profileData.age"
+            :value="currentUser.age"
         />
 
         <AppStatCard
@@ -146,7 +142,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.height_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="profileData.age"
+            :value="currentUser.age"
         />
 
         <AppStatCard
@@ -158,7 +154,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.weight_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="profileData.weight"
+            :value="currentUser.weight"
         />
 
         <AppStatCard
@@ -170,7 +166,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             :placeholder="$t('profile.form.bmi_label')"
             :trailing="true"
             trailing-label="measurements.kg"
-            :value="profileData.muscle"
+            :value="currentUser.muscle"
         />
       </div>
 
@@ -192,7 +188,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.chest_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="profileData.chest"
+              :value="currentUser.chest"
           />
 
           <AppStatCard
@@ -204,7 +200,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.hip_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="profileData.hip"
+              :value="currentUser.hip"
           />
 
           <AppStatCard
@@ -216,7 +212,7 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
               :placeholder="$t('profile.form.waist_label')"
               :trailing="true"
               trailing-label="measurements.kg"
-              :value="profileData.waist"
+              :value="currentUser.waist"
           />
         </div>
 
