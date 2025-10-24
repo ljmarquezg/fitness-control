@@ -34,27 +34,11 @@ async function onSubmit(event: FormSubmitEvent<UserRegisterFormSchema>) {
     const userCredential = await auth.register(email, password);
 
     if (userCredential) {
-      await updateProfile(userCredential, {
-        displayName: `${firstName} ${lastName}`,
-        photoURL: 'https://example.com/avatar.png'
-      });
-
-      const db = useFirebase().db;
-
-      await setDoc(doc(db, 'users', userCredential.uid), {
-        firstName,
-        lastName,
-        email,
-        createdAt: new Date().toISOString()
-      });
-
       notifications.success(`Welcome ${firstName} ${lastName}`, t('register.success_description'));
-
     }
   } catch (error) {
     console.error('Failed to login', error);
     notifications.error(t('register.error_title'), t('register.error_description'));
-    return;
   }
 }
 </script>
