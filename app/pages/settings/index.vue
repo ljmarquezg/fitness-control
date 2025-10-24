@@ -2,16 +2,15 @@
     setup
     lang="ts"
 >
-
 definePageMeta({
-  layout: 'dashboard'
-})
+  layout: 'dashboard',
+  requiresAuth: true
+});
+
 </script>
 
 <template>
-  <div id="profile-edit">
-    <AppProfileEdit/>
-  </div>
+  <AppSettings/>
 </template>
 
 <style scoped>

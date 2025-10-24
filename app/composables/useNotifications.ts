@@ -1,7 +1,9 @@
+import type { Toast } from '#ui/composables/useToast';
+
 export const useNotifications = () => {
   const toast = useToast()
 
-  const error = (title: string, description?: string) => {
+  const error = (title: string, description?: string): void => {
     toast.add({
       title,
       description,
@@ -26,7 +28,7 @@ export const useNotifications = () => {
     })
   }
 
-  const success = (title: string, description?: string) => {
+  const success = (title: string, description?: string): void => {
     toast.add({
       title,
       description,
@@ -35,7 +37,7 @@ export const useNotifications = () => {
     })
   }
 
-  const info = (title: string, description?: string) => {
+  const info = (title: string, description?: string): void => {
     toast.add({
       title,
       description,
@@ -44,7 +46,7 @@ export const useNotifications = () => {
     })
   }
 
-  const warning = (title: string, description?: string) => {
+  const warning = (title: string, description?: string): void => {
     toast.add({
       title,
       description,
@@ -53,7 +55,7 @@ export const useNotifications = () => {
     })
   }
 
-  const neutral = (title: string, description?: string, attributes?:  Partial<Toast>) => {
+  const neutral = (title: string, description?: string, attributes?:  Partial<Toast>): void => {
     toast.add({
       title,
       description,

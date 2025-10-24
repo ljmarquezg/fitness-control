@@ -5,6 +5,7 @@
 
 definePageMeta({
   layout: 'dashboard',
+  requiresAuth: true
 });
 </script>
 

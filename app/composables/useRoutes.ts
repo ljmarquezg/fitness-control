@@ -1,12 +1,11 @@
 export const useRoutes = () => {
   return {
-    home: () => '/',
-    login: () => '/auth/login',
-    register: () => '/auth/register',
-    dashboard: () => '/dashboard',
-    reports: () => '/reports',
-    profile: (userId?: string) => userId ? `/profile/${userId}` : '/profile',
-    settings: () => '/settings',
-    // Agrega más rutas según tu app
+    home: (): string => '/',
+    login: (): string => '/auth/login',
+    register: (): string => '/auth/register',
+    dashboard: (): string => '/dashboard',
+    reports: (): string => '/reports',
+    profile: (edit?: boolean): string => edit ? `/profile/edit` : '/profile',
+    settings: (): string => '/settings',
   };
 };

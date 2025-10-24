@@ -4,8 +4,10 @@ import { useAppUserSettingsState } from '~/composables/state/useAppUserSettingsS
 import { useAppUserState } from '~/composables/state/useAppUserState';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 import { updateProfile } from '~~/node_modules/firebase/auth';
+import firebase from '~~/node_modules/firebase/compat';
 import { doc, setDoc } from '~~/node_modules/firebase/firestore';
 import { useFirebase } from './useFirebase';
+import UserCredential = firebase.auth.UserCredential;
 
 const initializeAuthState = (auth: any) => {
   const {
@@ -15,25 +17,40 @@ const initializeAuthState = (auth: any) => {
   } = useAppUserState({});
   const { fetchUserProfile } = useUserProfile();
   const { fetchUserSettings } = useSettings();
-  const isLoggedIn: ComputedRef<boolean> = computed(() => !!currentUser.value);
-  // 🔹 Watch auth changes once globally
-  if (process.client) {
-    // Escucha cambios en el estado de autenticación
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
+  const isLoggedIn = useCookie<boolean>('isLoggedIn', {
+    default: () => false,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+  console.log('isLoggedIn cookie value on init:', isLoggedIn.value);
+  const isFetchingUserLoading: Ref<boolean> = useState('isFetchingUserLoading', () => false);
+
+  if (import.meta.client) {
+    onAuthStateChanged(auth, async (user: UserProfileData | null) => {
+      isFetchingUserLoading.value = true;
+      if (user?.uid) {
         setCurrentUserState(user);
+        isLoggedIn.value = true;
         const userProfile: UserProfileData = await fetchUserProfile();
-        const userSettings: void = await fetchUserSettings();
+        if (userProfile) {
+          await fetchUserSettings();
+        } else {
+          clearCurrentUserState();
+          isLoggedIn.value = false;
+        }
       } else {
         clearCurrentUserState();
+        isLoggedIn.value = false;
       }
+      isFetchingUserLoading.value = false;
     });
   }
 
   return {
     currentUser,
     clearCurrentUserState,
-    isLoggedIn
+    isLoggedIn,
+    isFetchingUserLoading
   };
 };
 
@@ -42,73 +59,49 @@ export const useAuth = () => {
   const {
     currentUser,
     clearCurrentUserState,
-    isLoggedIn
+    isLoggedIn,
+    isFetchingUserLoading
   } = initializeAuthState(auth);
   const { clearUserSettingsState } = useAppUserSettingsState();
+
   const isLoading = ref(false);
-  const notifications = useNotifications();
-
-  const login = async (email: string, password: string) => {
-    try {
-      const { t } = useI18n();
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      notifications.success(t('login.success.title'), 'login.success.message');
-      return userCredential.user;
-    } catch (error) {
-      notifications.error(t('login.error.title'), 'login.error.message');
-      console.error('❌ Error logging in:', error);
-      throw error;
-    }
+  const login = async (email: string, password: string): Promise<User> => {
+    isLoading.value = true;
+    const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+    isLoading.value = false;
+    return userCredential.user;
   };
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
-    const { t } = useI18n();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+  const register = async (email: string, password: string, firstName: string, lastName: string): Promise<User> => {
+    isLoading.value = true;
+    const { db } = useFirebase();
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      if (user) {
-        try {
-          await updateProfile(user, {
-            displayName: `${firstName} ${lastName}`,
-            photoURL: 'https://example.com/avatar.png'
-          });
-        } catch (error) {
-          console.error('❌ Error updating user profile:', error);
-        }
-
-        const db = useFirebase().db;
-
-        await setDoc(doc(db, 'users', user.uid), {
-          firstName,
-          lastName,
-          email,
-          createdAt: new Date().toISOString()
-        });
-
-        notifications.success(`Welcome ${firstName} ${lastName}`, t('register.success_message'));
-      }
-
-      return user;
-    } catch (error) {
-      console.error('❌ Error registering user:', error);
-      notifications.error(t('register.error.title'), 'register.error.message');
-      throw error;
+    if (user) {
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
+        photoURL: 'https://example.com/avatar.png'
+      });
+      await setDoc(doc(db, 'users', user.uid), {
+        firstName,
+        lastName,
+        email,
+        createdAt: new Date().toISOString()
+      });
     }
+    isLoading.value = false;
+    return user;
   };
 
-  const logout = async () => {
-    const { t } = useI18n();
-    try {
-      await signOut(auth);
-      clearCurrentUserState();
-      clearUserSettingsState();
-      notifications.success(t('logout.success.title'), 'logout.success.message');
-    } catch (error) {
-      console.error('❌ Error logging out:', error);
-      notifications.error(t('logout.error.title'), 'logout.error.message');
-      throw error;
-    }
+  const logout = async (): Promise<void> => {
+    isLoading.value = true;
+    await signOut(auth);
+    clearCurrentUserState();
+    clearUserSettingsState();
+    isLoading.value = false;
+    const cookie = useCookie('isLoggedIn');
+    cookie.value = null
   };
 
   const onAuthChanged = (callback: (user: User | null) => void) => {
@@ -122,5 +115,8 @@ export const useAuth = () => {
     register,
     logout,
     onAuthChanged,
+    initializeAuthState,
+    isLoading,
+    isFetchingUserLoading
   };
 };
