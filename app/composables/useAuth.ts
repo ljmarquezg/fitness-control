@@ -22,7 +22,6 @@ const initializeAuthState = (auth: any) => {
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
   });
-  console.log('isLoggedIn cookie value on init:', isLoggedIn.value);
   const isFetchingUserLoading: Ref<boolean> = useState('isFetchingUserLoading', () => false);
 
   if (import.meta.client) {

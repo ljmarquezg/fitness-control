@@ -61,7 +61,6 @@ export const useSettings = () => {
           settings[docSnap.id] = docSnap.data();
         });
 
-        console.log('settings collection ref', settings);
         updateUserSettingsState(settings);
       } catch (error) {
         console.error('❌ Error fetching user settings:', error);

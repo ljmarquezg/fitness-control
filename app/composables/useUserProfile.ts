@@ -99,7 +99,6 @@ export const useUserProfile = () => {
 
       await setDoc(docRef, newProfile);
       currentUser.value = newProfile;
-      console.log('✅ User profile created');
     } catch (error) {
       console.error('❌ Error creating user profile:', error);
       toast.error('Error creando el perfil del usuario');
@@ -176,7 +175,6 @@ export const useUserProfile = () => {
 
   const clearProfile = () => {
     clearCurrentUser(null);
-    console.log('🧹 Profile data cleared');
   };
 
   const isUserProfileCompleted = (): boolean => {
@@ -184,7 +182,6 @@ export const useUserProfile = () => {
     if(!user?.uid) return false;
     return UserProfileFields.every((field: string) => {
       const value = user[field];
-      console.log(value)
       return value !== undefined && value !== null && value !== '';
     });
   };
