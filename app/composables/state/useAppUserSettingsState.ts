@@ -1,11 +1,11 @@
 import { useAppUserState } from '~/composables/state/useAppUserState';
-import type { UnitsPreferencesSchema } from '~/schemas/settings/UnitsSchema';
+import type { UnitsLanguagesSchema, UnitsPreferencesSchema } from '~/schemas/settings/UnitsSchema';
 
 export const useAppUserSettingsState = () => {
   const { updateCurrentUserState } = useAppUserState();
   const userSettings: Ref<UnitsPreferencesSchema> = useState<UnitsPreferencesSchema>('userSettings', () => null);
 
-  const updateUserSettingsState = (settings: UnitsPreferencesSchema): void => {
+  const updateUserSettingsState = (settings: UnitsPreferencesSchema | UnitsLanguagesSchema): void => {
     userSettings.value = settings;
 
     updateCurrentUserState({

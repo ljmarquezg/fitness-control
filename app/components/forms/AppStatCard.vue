@@ -2,29 +2,43 @@
     setup
     lang="ts"
 >
+import type { ProfileIcons } from '~/schemas/profile/UserProfileSchema';
+
 const props = defineProps<{
-  color: string;
-  icon: string;
+  color?: string;
+  profileIcon?: ProfileIcons;
   editing?: boolean;
   isLoading?: boolean;
   modelValue?;
+  name?: string;
   label?: string;
   placeholder?: string;
   trailing?: boolean;
   trailingLabel?: string | number;
+  type?: string;
   unit?: string | number;
   value?: string | number;
 }>();
 const emit = defineEmits(['update:modelValue']);
-const classNames = computed(() => `${props.isLoading ? 'bg-gray-50 ' : props.color} p-3 w-16 h-16 rounded-xl bg-opacity-10 group-hover:scale-110 transition-transform`);
-const icon = computed(() => props.isLoading ? '' : props.icon);
+const iconColor = props?.profileIcon?.color ?? props.color;
+const classNames = computed(() => `${props.isLoading ? 'bg-gray-50 ' : iconColor} p-3 w-16 h-16 rounded-xl bg-opacity-10 group-hover:scale-110 transition-transform`);
+const icon = computed(() => props.isLoading ? '' : props?.profileIcon?.icon);
+
+const inputValue = computed({
+  get: () => props.modelValue,
+  set: (val) => emit('update:modelValue', val)
+});
+
 </script>
 
 <template>
   <UCard class="p-0 hover:shadow-lg border-0 hover:border-primary/30 overflow-hidden relative">
     <div class="flex flex-col justify-items-start mb-3">
       <slot name="icon">
-        <div :class="classNames" v-if="props.icon">
+        <div
+            v-if="props.profileIcon"
+            :class="classNames"
+        >
           <UIcon
               :name="icon"
               :class="`size-10`"
@@ -36,18 +50,19 @@ const icon = computed(() => props.isLoading ? '' : props.icon);
         <slot name="editing">
           <UFormField
               :label="$t(label)"
-              name="height"
+              :name="name"
               class="mt-2 text-xs text-muted"
           >
             <UInput
-                :model-value="props.modelValue"
-                type="number"
+                v-model="inputValue"
+                :name="name"
+                :type="type"
                 :placeholder="props.placeholder"
                 class="mt-2"
                 @update:model-value="emit('update:modelValue', $event)"
             >
               <template
-                  v-if="props.trailing"
+                  v-if="props.trailingLabel"
                   #trailing
               >
                 <div

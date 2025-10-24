@@ -5,6 +5,12 @@
     "newRecord": "Add new record",
     "title": "Dashboard"
   },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "languageChangedTo": "language updated to {language}",
+    "languageUpdated": "Language updated"
+  },
   "login": {
     "description": "Enter your credentials to access your account.",
     "error": {
@@ -36,7 +42,13 @@
       "message": "You have successfully logged out.",
       "title": "Goodbye!"
     },
-    "title": "Logged Out"
+    "title": "Logged Out",
+    "confirm": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to log out?",
+      "confirmButton": "Yes, Log Out",
+      "cancelButton": "Cancel"
+    }
   },
   "measurements": {
     "actions": "Actions",
@@ -61,15 +73,15 @@
     "delete": "Delete",
     "description": "Update your body measurements",
     "edit": "Edit",
-    "ft": "ft",
+    "ft-in": "ft-in",
     "height": "Height",
     "hip": "Hip",
     "inches": "inches",
     "kg": "kg",
     "latest": "Latest measurement",
-    "lbs": "lbs",
+    "lb": "lbs",
     "m": "m",
-    "muscle_mass": "Muscle Mass",
+    "muscleMass": "Muscle Mass",
     "no_data": "No measurements recorded yet.",
     "title": "Measurements",
     "view_history": "View history",
@@ -94,8 +106,14 @@
       "height_label": "Height",
       "hip_label": "Hip",
       "last_name_label": "Last Name",
-      "muscle_mass_label": "Muscle Mass",
+      "muscleMass_label": "Muscle Mass",
       "password_label": "Password",
+      "sex": {
+        "female": "Female",
+        "label": "Sex",
+        "male": "Male",
+        "other": "Other"
+      },
       "waist_label": "Waist",
       "weight_label": "Weight",
       "years": "years",
@@ -104,8 +122,17 @@
     "health_info": "Health Information",
     "navigationLabel": "Profile",
     "personalInformation": {
+      "completeNow": "Complete Now",
       "description": "Actualice la información necesaria",
+      "incompleteProfileDescription": "Complete your profile by providing the necessary information.",
+      "incompleteProfileTitle": "Complete your profile",
       "title": "Personal Information"
+    },
+    "sex": {
+      "female": "Female",
+      "label": "Sex",
+      "male": "Male",
+      "other": "Other"
     },
     "title": "Perfíl",
     "updateFailure": "Profile update failed. Please try again later.",
@@ -133,8 +160,22 @@
     },
     "title": "Create Account"
   },
+  "reports": {
+    "navigationLabel": "Reports",
+    "title": "Reports"
+  },
   "settings": {
     "description": "Manage your account settings and set preferences",
+    "form": {
+      "imperial": {
+        "height": "Feet/Inches (ft/in)",
+        "weight": "Pounds (lbs)"
+      },
+      "metric": {
+        "height": "Meters/Centimeters (m/cm)",
+        "weight": "Kilograms (kg)"
+      }
+    },
     "measurement_units": {
       "description": "Select your preferred measurement units",
       "imperial": "Imperial (ft, in, lbs)",
@@ -143,6 +184,16 @@
       "title": "Measurement Units"
     },
     "navigationLabel": "Settings",
-    "title": "Settings"
+    "title": "Settings",
+    "update": {
+      "error": {
+        "message": "Settings update failed. Please try again later.",
+        "title": "Update Error"
+      },
+      "success": {
+        "message": "Settings updated successfully.",
+        "title": "Success"
+      }
+    }
   }
 }

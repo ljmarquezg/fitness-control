@@ -11,5 +11,9 @@ export const useDashboardNavigation = {
   profile: () => ({
     label: 'profile.navigationLabel',
     url: routes.profile()
+  }),
+  settings: () => ({
+    label: 'settings.navigationLabel',
+    url: routes.settings()
   })
 };

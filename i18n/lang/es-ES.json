@@ -5,6 +5,12 @@
     "newRecord": "Agregar registro",
     "title": "Dashboard"
   },
+  "languages": {
+    "en": "Inglés",
+    "es": "Español",
+    "languageChangedTo": "Idioma actualizado a {language}",
+    "languageUpdated": "Idioma actualizado"
+  },
   "login": {
     "description": "Ingresa tus credenciales para acceder a tu cuenta.",
     "error": {
@@ -36,7 +42,13 @@
       "message": "Has cerrado sesión exitosamente.",
       "title": "¡Adiós!"
     },
-    "title": "Sesión Cerrada"
+    "title": "Sesión Cerrada",
+    "confirm": {
+      "title": "Confirmar Cierre de Sesión",
+      "message": "¿Estás seguro de que deseas cerrar sesión?",
+      "confirmButton": "Sí, Cerrar Sesión",
+      "cancelButton": "Cancelar"
+    }
   },
   "measurements": {
     "actions": "Acciones",
@@ -61,13 +73,13 @@
     "delete": "Eliminar",
     "description": "Actualiza tus medidas corporales",
     "edit": "Editar",
-    "ft": "pies",
+    "ft-in": "pulgadas",
     "height": "Altura",
     "hip": "Cadera",
     "inches": "pulgadas",
     "kg": "kg",
     "latest": "Última medida",
-    "lbs": "libras",
+    "lb": "libras",
     "m": "m",
     "muscle_mass": "Masa Muscular",
     "no_data": "No hay medidas registradas aún.",
@@ -87,15 +99,21 @@
       "body_fat_label": "Grasa Corporal",
       "body_water_label": "Agua Corporal",
       "bone_mass_label": "Masa Ósea",
-      "button": "Update",
+      "button": "Actualizar",
       "chest_label": "Pecho",
       "email_label": "Email",
       "first_name_label": "First Name",
       "height_label": "Altura",
       "hip_label": "Cintura",
       "last_name_label": "Last Name",
-      "muscle_mass_label": "Masa Muscular",
+      "muscleMass_label": "Masa Muscular",
       "password_label": "Password",
+      "sex": {
+        "female": "Femenino",
+        "label": "Sexo",
+        "male": "Masculino",
+        "other": "Otro"
+      },
       "waist_label": "Cadera",
       "weight_label": "Peso",
       "years": "años",
@@ -104,8 +122,17 @@
     "health_info": "Información de Salud",
     "navigationLabel": "Perfíl",
     "personalInformation": {
+      "completeNow": "Completar Ahora",
       "description": "Actualice la información necesaria",
+      "incompleteProfileDescription": "Completa tu perfil proporcionando la información necesaria.",
+      "incompleteProfileTitle": "Completa tu perfil",
       "title": "Información Personal"
+    },
+    "sex": {
+      "female": "Femenino",
+      "label": "Sexo",
+      "male": "Masculino",
+      "other": "Otro"
     },
     "title": "Perfíl",
     "updateError": "Error al actualizar el perfil. Por favor, inténtalo de nuevo.",
@@ -137,6 +164,7 @@
     "navigationLabel": "Reportes"
   },
   "settings": {
+    "description": "Administra la configuración de tu cuenta y establece preferencias",
     "form": {
       "imperial": {
         "height": "Pies (ft) y Pulgadas (in)",
@@ -155,6 +183,16 @@
       "title": "Unidades de Medida"
     },
     "navigationLabel": "Configuración",
-    "title": "Configuración"
+    "title": "Configuración",
+    "update": {
+      "error": {
+        "message": "Error al actualizar la configuración. Por favor, inténtalo de nuevo.",
+        "title": "Error"
+      },
+      "success": {
+        "message": "Configuración actualizada exitosamente.",
+        "title": "¡Hecho!"
+      }
+    }
   }
 }
