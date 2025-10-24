@@ -7,10 +7,7 @@ import { useFirestoreDatabase } from '~/composables/useFirestoreDatabase';
 
 const routes = useRoutes();
 definePageMeta({
-  router: {
-    alias: ['/dashboard']
-  },
-  redirect: routes.dashboard,
+  redirect: routes.login,
 });
 
 const {

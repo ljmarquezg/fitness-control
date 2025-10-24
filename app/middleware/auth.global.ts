@@ -1,17 +1,19 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-  const routes = useRoutes();
-  if (process.server) return;
-  const auth = useAuth();
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  if (import.meta.server) return;
 
-  watch(() => auth.isLoggedIn.value, (loggedIn) => {
-    if (!loggedIn) {
-      console.log('Usuario no logueado, redirigiendo...');
-      navigateTo(routes.login());
-    } else {
-      if (to.path === routes.login() || to.path === routes.register()) {
-        console.log('Usuario logueado:', auth.currentUser.value?.email);
-        return navigateTo(routes.home());
-      }
+  const routes = useRoutes();
+  const notifications = useNotifications();
+  const { isLoggedIn } = useAuth();
+  const toLogin = routes.login();
+  const toDashboard = routes.dashboard();
+
+  watchEffect(() => {
+    if (!isLoggedIn.value && to.path !== toLogin) {
+      return navigateTo(toLogin, { replace: true });
+    }
+
+    if (isLoggedIn.value && to.path === toLogin) {
+      return navigateTo(toDashboard, { replace: true });
     }
   });
 
