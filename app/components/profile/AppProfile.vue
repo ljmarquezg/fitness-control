@@ -8,7 +8,7 @@ import { calculateBMI, getSexIcon } from '~/utils/profile/profileData';
 
 const { userProfile } = useAppUserState();
 const { isLoadingProfile } = useUserProfile();
-const isLoading = computed(() => !userProfile?.value?.firstName || isLoadingProfile.value);
+const isLoading = computed(() => !userProfile?.value?.uid || isLoadingProfile.value);
 const measurements = computed(() => {
   return userProfile.value?.settings?.measurements;
 });

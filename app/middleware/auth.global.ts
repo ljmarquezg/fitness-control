@@ -4,5 +4,9 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (!isLoggedIn.value && to.meta.requiresAuth) {
     return navigateTo(routes.login())
+  } else {
+    if(isLoggedIn.value && (to.path === routes.login() || to.path === routes.register())) {
+      return navigateTo(routes.dashboard())
+    }
   }
 })

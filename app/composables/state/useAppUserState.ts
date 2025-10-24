@@ -1,11 +1,11 @@
-import { UserProfileFields } from '~/composables/useUserProfile';
+import { UserProfileExtendedFields } from '~/composables/useUserProfile';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 import { filterObjectByKeys } from '~/utils/filterObjectData';
 
 export const useAppUserState = (initialValue?: UserProfileData | null) => {
   const currentUser: Ref<UserProfileData> = useState<UserProfileData>('currentUser', () => initialValue ?? null);
   const userProfile: Ref<UserProfileData> = useState<UserProfileData>('userProfile', () => initialValue ?? null);
-  const isUserStateLoading: Ref<boolean> = useState<UserProfileData>('userProfile', () => false );
+  const isUserStateLoading: Ref<boolean> = useState<UserProfileData>('userProfile', () => false);
 
   const measurementData = computed(() => {
     if (!userProfile.value) return null;
@@ -26,7 +26,7 @@ export const useAppUserState = (initialValue?: UserProfileData | null) => {
 
   const profileInfo = (): UserProfileData => {
     if (!userProfile.value) return null;
-    return filterObjectByKeys(userProfile.value, UserProfileFields);
+    return filterObjectByKeys(userProfile.value, UserProfileExtendedFields);
   };
 
   const setCurrentUserState = (user: UserProfileData | null): void => {

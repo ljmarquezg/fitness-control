@@ -15,16 +15,15 @@ definePageMeta({
 });
 
 const { isUserProfileCompleted } = useUserProfile();
-const auth = useAuth();
-const toast = useToast();
+const { isLoggedIn, currentUser } = useAuth();
+const notifications = useNotifications();
 const routes = useRoutes();
 
 const showProfileCompletionWarning = ref(false);
-
-watch(() => auth.isLoggedIn.value, (loggedIn) => {
-  showProfileCompletionWarning.value = isUserProfileCompleted();
-  if (loggedIn && showProfileCompletionWarning.value) {
-    toast.add({
+watch(() => currentUser.value, (currentUser) => {
+  showProfileCompletionWarning.value = !isUserProfileCompleted();
+  if (currentUser.value?.uid && isLoggedIn.value && showProfileCompletionWarning.value) {
+    notifications.info({
       title: t('profile.personalInformation.incompleteProfileTitle'),
       description: t('profile.personalInformation.incompleteProfileDescription'),
       orientation: 'vertical',
@@ -40,7 +39,7 @@ watch(() => auth.isLoggedIn.value, (loggedIn) => {
       }]
     });
   }
-});
+}, { immediate: true });
 
 </script>
 

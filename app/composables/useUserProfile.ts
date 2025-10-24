@@ -5,21 +5,25 @@ import { useFirebase } from '~/composables/useFirebase';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 
 export const UserProfileFields: string[] = [
+  'uid',
   'firstName',
   'lastName',
-  'displayName',
   'email',
   'photoURL',
   'age',
+  'settings',
+  'sex',
+];
+
+export const  UserProfileExtendedFields = [
+  ...UserProfileFields,
+  'displayName',
   'weight',
   'height',
   'chest',
   'hip',
   'waist',
-  'muscleMass',
-  'settings',
-  'sex',
-];
+]
 
 export const useUserProfile = () => {
   const { db } = useFirebase();
@@ -58,10 +62,10 @@ export const useUserProfile = () => {
         }
 
         const userProfile = {
+          uid,
           photoUrl: user?.photoURL,
           ...snapData
         };
-
         updateCurrentUserState(userProfile);
         return userProfile;
       } else {
@@ -175,16 +179,14 @@ export const useUserProfile = () => {
     console.log('🧹 Profile data cleared');
   };
 
-  const isUserProfileCompleted = () => {
+  const isUserProfileCompleted = (): boolean => {
     const user: UserProfileData = currentUser?.value;
-    if(!user) return false;
-    const showCompleteProfileMessage: boolean = UserProfileFields.every((field: string) => {
+    if(!user?.uid) return false;
+    return UserProfileFields.every((field: string) => {
       const value = user[field];
       console.log(value)
       return value !== undefined && value !== null && value !== '';
     });
-
-    return showCompleteProfileMessage;
   };
 
   return {

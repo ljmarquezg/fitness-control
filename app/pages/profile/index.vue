@@ -35,18 +35,6 @@ const onSaved = () => {
   state.value.editing = false;
 };
 
-const logout = async () => {
-  const auth = useAuth();
-  try {
-    await auth.logout();
-    toggleLogoutModel();
-    notifications.success(t('logout.success.title'), t('logout.success.message'));
-  } catch (error) {
-    notifications.error(t('logout.error.title'), t('logout.error.message'));
-    console.error(error);
-  }
-};
-
 watch(
     () => route.query.edit,
     (newEdit) => {
