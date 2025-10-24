@@ -4,6 +4,23 @@ import { useAppUserState } from '~/composables/state/useAppUserState';
 import { useFirebase } from '~/composables/useFirebase';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
 
+export const UserProfileFields: string[] = [
+  'firstName',
+  'lastName',
+  'displayName',
+  'email',
+  'photoURL',
+  'age',
+  'weight',
+  'height',
+  'chest',
+  'hip',
+  'waist',
+  'muscleMass',
+  'settings',
+  'sex',
+];
+
 export const useUserProfile = () => {
   const { db } = useFirebase();
   const {
@@ -23,8 +40,7 @@ export const useUserProfile = () => {
    * @returns {Promise<void>} Resolves when the profile is fetched or initialized.
    */
   const fetchUserProfile = async (): Promise<UserProfileData> => {
-    const user: User | UserProfileData = currentUser.value;
-
+    const user: UserProfileData = currentUser.value;
     if (!user) {
       return;
     }
@@ -49,7 +65,6 @@ export const useUserProfile = () => {
         updateCurrentUserState(userProfile);
         return userProfile;
       } else {
-        console.log('📝 No profile found for user:', uid);
         toast.info('No se encontró perfil, creando uno nuevo...');
         return null;
       }
@@ -91,6 +106,7 @@ export const useUserProfile = () => {
   };
 
   const updateUserEmail = async (newEmail: string, currentPassword) => {
+    const user: UserProfileData = currentUser.value;
     if (!user) throw new Error('No hay usuario autenticado');
 
     try {
@@ -121,14 +137,16 @@ export const useUserProfile = () => {
     try {
       if (!user) throw new Error('No user logged in');
 
+      const firstName = data.firstName?.trim() || '';
+      const lastName = data.lastName?.trim() || '';
       // 1️⃣ Firebase Auth
       await updateProfile(user, {
-        displayName: `${data.firstName ?? ''} ${data.lastName ?? ''}`.trim(),
+        displayName: `${firstName} ${lastName}`,
         photoURL: data.photoURL || null,
       });
 
       // 2️⃣ Firestore
-      const uid = user.uid;
+      const uid: string = user.uid;
       const cleanData = Object.fromEntries(
         Object.entries(data).filter(([_, v]) => v !== undefined)
       );
@@ -140,7 +158,7 @@ export const useUserProfile = () => {
       }, { merge: true });
 
       // 3️⃣ Local state
-      updateCurrentUserState({ ...user.value, ...cleanData });
+      updateCurrentUserState({ ...user, ...cleanData });
       return user;
 
     } catch (error) {
@@ -157,11 +175,25 @@ export const useUserProfile = () => {
     console.log('🧹 Profile data cleared');
   };
 
+  const isUserProfileCompleted = () => {
+    const user: UserProfileData = currentUser?.value;
+    if(!user) return false;
+    const showCompleteProfileMessage: boolean = UserProfileFields.every((field: string) => {
+      const value = user[field];
+      console.log(value)
+      return value !== undefined && value !== null && value !== '';
+    });
+
+    return showCompleteProfileMessage;
+  };
+
   return {
+    createUserProfile,
     clearProfile,
     isLoadingProfile,
     fetchUserProfile,
     updateUserProfile,
     updateUserEmail,
+    isUserProfileCompleted,
   };
 };
