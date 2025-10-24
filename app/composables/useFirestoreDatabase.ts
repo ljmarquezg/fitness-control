@@ -3,16 +3,13 @@ import { useFirebase } from './useFirebase';
 
 export const useFirestoreDatabase = () => {
   const { db } = useFirebase();
-  console.log('Firebase initialized successfully', db);
   const addDocument = async (collectionName: string, data: any) => {
     try {
-      console.log('Adding document to collection:', collectionName, data);
       const docRef = await addDoc(collection(db, collectionName), {
         ...data,
         createdAt: new Date(),
         updatedAt: new Date()
       });
-      console.log('✅ Document added with ID:', docRef.id);
       return docRef.id;
     } catch (error) {
       console.error('❌ Error adding document:', error);
@@ -29,7 +26,6 @@ export const useFirestoreDatabase = () => {
         id: doc.id,
         ...doc.data()
       }));
-      console.log('✅ Retrieved', documents.length, 'documents');
       return documents;
     } catch (error) {
       console.error('❌ Error getting documents:', error);
@@ -44,7 +40,6 @@ export const useFirestoreDatabase = () => {
         ...data,
         updatedAt: new Date()
       });
-      console.log('✅ Document updated:', id);
     } catch (error) {
       console.error('❌ Error updating document:', error);
       throw error;
@@ -54,7 +49,6 @@ export const useFirestoreDatabase = () => {
   const deleteDocument = async (collectionName: string, id: string) => {
     try {
       await deleteDoc(doc(db, collectionName, id));
-      console.log('✅ Document deleted:', id);
     } catch (error) {
       console.error('❌ Error deleting document:', error);
       throw error;

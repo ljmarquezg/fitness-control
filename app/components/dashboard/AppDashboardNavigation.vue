@@ -7,8 +7,13 @@ import { useI18n } from 'vue-i18n';
 import { useDashboardNavigation } from '~/composables/useAppNavigation';
 
 const { t } = useI18n();
+const auth = useAuth();
+const logout = async () => {
+  await auth.logout();
+};
+
 const appDashboardNavigation = useDashboardNavigation;
-const items = ref<NavigationMenuItem[]>([
+const items: Ref<NavigationMenuItem[]> = computed(() => [
   {
     label: t(appDashboardNavigation.dashboard().label),
     icon: 'i-lucide-home',
@@ -44,60 +49,66 @@ const items = ref<NavigationMenuItem[]>([
     icon: 'i-lucide-user',
     to: appDashboardNavigation.profile().url,
     slot: 'profile' as const,
-    /*children: [
-      {
-        label: 'Link',
-        icon: 'i-lucide-file-text',
-        description: 'Use NuxtLink with superpowers.',
-        to: '/components/link'
-      },
-      {
-        label: 'Modal',
-        icon: 'i-lucide-file-text',
-        description: 'Display a modal within your application.',
-        to: '/components/modal'
-      },
-      {
-        label: 'NavigationMenu',
-        icon: 'i-lucide-file-text',
-        description: 'Display a list of links.',
-        to: '/components/navigation-menu'
-      },
-      {
-        label: 'Pagination',
-        icon: 'i-lucide-file-text',
-        description: 'Display a list of pages.',
-        to: '/components/pagination'
-      },
-      {
-        label: 'Popover',
-        icon: 'i-lucide-file-text',
-        description: 'Display a non-modal dialog that floats around a trigger element.',
-        to: '/components/popover'
-      },
-      {
-        label: 'Progress',
-        icon: 'i-lucide-file-text',
-        description: 'Show a horizontal bar to indicate task progression.',
-        to: '/components/progress'
-      }
-    ]*/
   },
   {
-    label: 'Help',
-    icon: 'i-lucide-circle-help',
+    label: t(appDashboardNavigation.settings().label),
+    icon: 'i-lucide-settings',
+    to: appDashboardNavigation.settings().url,
   }
 ]);
+const logoutModalVisible = ref(false);
+const toggleLogoutModel = () => {
+  logoutModalVisible.value = !logoutModalVisible.value;
+};
 
 </script>
 
 <template>
-  <UNavigationMenu
-      :items="items"
-      :lang="'en'"
-      orientation="vertical"
-      class="data-[orientation=vertical]:w-48"
-  />
+  <div class="flex flex-col h-full justify-between">
+    <div class="flex flex-col">
+      <UNavigationMenu
+          :items="items"
+          :lang="'en'"
+          orientation="vertical"
+          class="data-[orientation=vertical]:w-48"
+      />
+
+    </div>
+    <div class="flex-flex-col">
+      <AppLanguageSelector/>
+      <UButton
+          icon="i-lucide-log-out"
+          size="lg"
+          color="neutral"
+          variant="link"
+          @click="toggleLogoutModel()"
+      >
+        Logout
+      </UButton>
+    </div>
+  </div>
+  <UModal :open="logoutModalVisible">
+    <template #content>
+      <div class="p-6">
+        <h2 class="text-2xl font-bold mb-4">{{ t('logout.confirm.title') }}</h2>
+        <p class="mb-6">{{ t('logout.confirm.message') }}</p>
+        <div class="flex justify-end space-x-4">
+          <UButton
+              color="default"
+              @click="toggleLogoutModel()"
+          >
+            {{ t('logout.confirm.cancelButton') }}
+          </UButton>
+          <UButton
+              color="error"
+              @click="logout();"
+          >
+            {{ t('logout.confirm.confirmButton') }}
+          </UButton>
+        </div>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <style scoped>

@@ -2,12 +2,14 @@
     setup
     lang="ts"
 >
+definePageMeta({
+  layout: 'auth',
+  requiresAuth: false
+});
+
 </script>
 <template>
-  <div
-      id="register"
-      class="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black"
-  >
+  <div id="register">
     <AppRegister class="w-full max-w-lg"/>
   </div>
 </template>

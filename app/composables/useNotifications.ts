@@ -1,66 +1,67 @@
+import type { Toast } from '#ui/composables/useToast';
+
 export const useNotifications = () => {
-  const toast = useToast()
+  const toast = useToast();
 
-  const error = (title: string, description?: string) => {
-    toast.add({
-      title,
-      description,
-      color: 'error',
-      icon: 'i-heroicons-x-circle'
-    })
-  }
+  const showToast = (
+    type: string,
+    titleOrConfig: string | ToastConfig,
+    description?: string
+  ) => {
+    if (!import.meta.client) return;
 
-  const primary = (title: string, description?: string, attributes?:  Partial<Toast>): void => {
-    toast.add({
-      title,
-      description,
-      ...attributes
-    })
-  }
+    const defaults: Record<string, Partial<Toast>> = {
+      error: {
+        color: 'error',
+        icon: 'i-heroicons-x-circle'
+      },
+      success: {
+        color: 'success',
+        icon: 'i-heroicons-check-circle'
+      },
+      info: {
+        color: 'info',
+        icon: 'i-heroicons-information-circle'
+      },
+      warning: {
+        color: 'warning',
+        icon: 'i-heroicons-exclamation-triangle'
+      },
+      neutral: { color: 'neutral' },
+      primary: {},
+      secondary: {},
+    };
+    const config: ToastConfig =
+      typeof titleOrConfig === 'string' ? { title: titleOrConfig, description } : titleOrConfig;
 
-  const secondary = (title: string, description?: string, attributes?:  Partial<Toast>): void => {
     toast.add({
-      title,
-      description,
-      ...attributes
-    })
-  }
+      ...defaults[type],
+      ...config,
+    });
+  };
 
-  const success = (title: string, description?: string) => {
-    toast.add({
-      title,
-      description,
-      color: 'success',
-      icon: 'i-heroicons-check-circle'
-    })
-  }
+  const error = (title: string, description?: string) => showToast('error', title, description);
 
-  const info = (title: string, description?: string) => {
-    toast.add({
-      title,
-      description,
-      color: 'info',
-      icon: 'i-heroicons-information-circle'
-    })
-  }
+  const success = (title: string, description?: string) => showToast('success', title, description);
 
-  const warning = (title: string, description?: string) => {
-    toast.add({
-      title,
-      description,
-      color: 'warning',
-      icon: 'i-heroicons-exclamation-triangle'
-    })
-  }
+  const info = (title: string | ToastConfig, description?: string) => showToast('info', title, description);
 
-  const neutral = (title: string, description?: string, attributes?:  Partial<Toast>) => {
-    toast.add({
-      title,
-      description,
-      color: 'neutral',
-      ...attributes,
-    })
-  }
+  const warning = (title: string, description?: string) => showToast('warning', title, description);
+
+  const neutral = (title: string, description?: string, a?: Partial<Toast>) => showToast('neutral', {
+    title,
+    description: description, ...a
+  });
+
+  const primary = (title: string, description?: string, a?: Partial<Toast>) => showToast('primary', {
+    title,
+    description: description, ...a
+  });
+
+  const secondary = (title: string, description?: string, a?: Partial<Toast>) => showToast('secondary', {
+    title,
+    description: description, ...a
+  });
 
   return {
     error,
@@ -70,5 +71,5 @@ export const useNotifications = () => {
     info,
     warning,
     neutral
-  }
-}
+  };
+};

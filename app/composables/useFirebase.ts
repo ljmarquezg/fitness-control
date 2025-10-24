@@ -2,7 +2,6 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Variables globales para Firebase
 let firebaseApp = null;
 let firestore = null;
 let auth = null;
@@ -27,18 +26,15 @@ const initFirebase = () => {
     appId: config.public.firebaseAppId,
   };
 
-  // Verificar configuración
   if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
     throw new Error('Firebase configuration is missing. Check your .env file.');
   }
 
   try {
-    // Verificar si ya existe una app inicializada
     firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
     firestore = getFirestore(firebaseApp);
     auth = getAuth(firebaseApp);
 
-    console.log('✅ Firebase initialized successfully');
     return {
       app: firebaseApp,
       db: firestore,

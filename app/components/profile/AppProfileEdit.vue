@@ -3,13 +3,21 @@
     lang="ts"
 >
 import type { FormSubmitEvent } from '@nuxt/ui';
-import { updateUserProfileFormSchema, type UpdateUserProfileFormSchema, type UserFormSchema } from '~/schemas/profile/UserProfileSchema';
+import { useAppUserState } from '~/composables/state/useAppUserState';
+import { PROFILE_ICONS, updateUserProfileFormSchema, type UpdateUserProfileFormSchema, type UserFormSchema } from '~/schemas/profile/UserProfileSchema';
 
-const userProfile = useUserProfile();
-const profileData = userProfile.profileData;
-const isLoading = userProfile.isLoadingProfile;
+const { userProfile } = useAppUserState();
+const { updateUserProfile } = useUserProfile();
 const emit = defineEmits(['saved']);
-const toast = useNotifications();
+const formRef = ref();
+
+function submitForm() {
+  return formRef.value?.submit();
+}
+
+defineExpose({
+  submitForm,
+});
 
 const {
   firstName,
@@ -21,8 +29,9 @@ const {
   chest,
   hip,
   waist,
-  muscle
-} = profileData.value;
+  muscle,
+  sex
+} = userProfile.value;
 
 const ui = {
   root: 'relative flex flex-col relative w-24 h-24 rounded-full',
@@ -38,6 +47,24 @@ const ui = {
   fileLeadingAvatar: 'w-full h-full rounded-full object-cover',
 };
 
+const sexOptions = [
+  {
+    label: $t('profile.form.sex.male'),
+    value: 'male',
+    icon: 'i-lucide-mars'
+  },
+  {
+    label: $t('profile.form.sex.female'),
+    value: 'female',
+    icon: 'i-lucide-venus'
+  },
+  {
+    label: $t('profile.form.sex.other'),
+    value: 'other',
+    icon: 'i-lucide-g'
+  },
+];
+
 const stateUserForm = reactive<Partial<UpdateUserProfileFormSchema>>({
   firstName,
   lastName,
@@ -49,28 +76,30 @@ const stateUserForm = reactive<Partial<UpdateUserProfileFormSchema>>({
   hip,
   waist,
   muscle,
+  sex: sex ?? 'male',
 });
+const isLoading = ref(false);
+const isSubmitting = ref(false);
 
 async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
-  try {
-    await userProfile.updateUser(event.data);
-    toast.success('Success', 'Profile updated successfully.');
+  isSubmitting.value = true;
+  await updateUserProfile(event.data).then(() => {
     emit('saved');
-  } catch (error) {
-    console.log(error);
-    toast.error('Error', 'Failed to login. Please check your credentials.');
-    return;
-  }
+  }).finally(() => {
+    isSubmitting.value = false;
+  });
 }
 </script>
 
 <template>
   <div class="profile">
     <UForm
+        ref="formRef"
         :schema="updateUserProfileFormSchema"
         :state="stateUserForm"
         class="space-y-6"
         @submit="onSubmitUserForm"
+        @error="console.log('❌ Form error:', $event)"
     >
       <UCard>
         <template #header>
@@ -80,97 +109,133 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
           </div>
         </template>
 
-
         <div class="flex flex-col sm:flex-row content-center justify-start sm:items-center space-x-0 sm:space-x-8 gap-4">
-          <UFileUpload
-              v-model="stateUserForm.photoURL"
-              variant="button"
-              size="xl"
-              icon="i-lucide-image"
-              label=""
-              description=""
-              :interactive="true"
-              :highlight="true"
-              accept="image/*"
-              :max-files="1"
-              :max-size="1024 * 1024"
-              class="rounded-lg"
-              :ui="ui"
-          />
+          <template v-if="isLoading">
+            <USkeleton class="w-24 h-24 rounded-lg"/>
+          </template>
+          <template v-else>
+            <UFileUpload
+                v-model="stateUserForm.photoURL"
+                variant="button"
+                size="xl"
+                icon="i-lucide-image"
+                label=""
+                description=""
+                :interactive="true"
+                :highlight="true"
+                accept="image/*"
+                :max-files="1"
+                :max-size="1024 * 1024"
+                class="rounded-lg"
+                :ui="ui"
+            />
 
-          <div class="flex flex-col items-center w-full">
-            <UFormField
-                :label="$t('profile.form.first_name_label')"
-                name="firstName"
-                class="w-full mb-4"
-            >
-              <UInput
-                  v-model="stateUserForm.firstName"
-                  icon="i-heroicons-user"
-              />
-            </UFormField>
+            <div class="flex flex-col items-center w-full">
+              <UFormField
+                  :label="$t('profile.form.first_name_label')"
+                  name="firstName"
+                  class="w-full mb-4"
+              >
+                <UInput
+                    v-model="stateUserForm.firstName"
+                    icon="i-heroicons-user"
+                    :disabled="isSubmitting.value"
+                />
+              </UFormField>
 
-            <UFormField
-                :label="$t('profile.form.last_name_label')"
-                name="lastName"
-                class="w-full"
-            >
-              <UInput
-                  v-model="stateUserForm.lastName"
-                  icon="i-heroicons-user"
-              />
-            </UFormField>
-          </div>
+              <UFormField
+                  :label="$t('profile.form.last_name_label')"
+                  name="lastName"
+                  class="w-full"
+              >
+                <UInput
+                    v-model="stateUserForm.lastName"
+                    icon="i-heroicons-user"
+                    :disabled="isSubmitting.value"
+                />
+              </UFormField>
+
+              <div class="flex flex-row items-start w-full">
+                <UFormField
+                    :label="$t('profile.form.sex.label')"
+                    name="sex"
+                    class="mt-2"
+                >
+                  <URadioGroup
+                      v-model="stateUserForm.sex"
+                      :items="sexOptions"
+                      orientation="horizontal"
+                      variant="card"
+                  >
+                    <template #label="{ item }">
+                      <div class="flex items-center gap-2">
+                        <UIcon
+                            v-if="item.icon"
+                            :name="item.icon"
+                            class="w-5 h-5"
+                        />
+                        <span>{{ item.label }}</span>
+                      </div>
+                    </template>
+                  </URadioGroup>
+                </UFormField>
+              </div>
+            </div>
+          </template>
         </div>
       </UCard>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <AppStatCard
             v-model="stateUserForm.age"
-            color="bg-blue-500/10 text-blue-500 dark:bg-blue dark:text-blue-500"
-            icon="i-lucide-cake"
+            :profile-icon="PROFILE_ICONS.age"
             :editing="true"
             label="profile.form.age_label"
+            name="age"
+            type="number"
             :placeholder="$t('profile.form.years_old')"
             :trailing="true"
             trailing-label="profile.form.years"
-            :value="profileData.age"
+            :value="userProfile.age"
         />
 
         <AppStatCard
             v-model="stateUserForm.height"
-            color="bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-500"
-            icon="i-lucide-ruler"
+            :profile-icon="PROFILE_ICONS.height"
             :editing="true"
             label="profile.form.height_label"
+            name="height"
+            type="number"
             :placeholder="$t('profile.form.height_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="profileData.age"
+            :value="userProfile.height"
         />
 
         <AppStatCard
             v-model="stateUserForm.weight"
-            color="bg-teal-500/10 text-teal-500 dark:bg-teal/10 dark:text-teal-500"
-            icon="i-heroicons-scale"
+            :profile-icon="PROFILE_ICONS.weight"
             :editing="true"
             label="profile.form.weight_label"
+            name="weight"
+            type="number"
             :placeholder="$t('profile.form.weight_label')"
             :trailing="true"
             trailing-label="measurements.cm"
-            :value="profileData.weight"
+            :value="userProfile.weight"
         />
 
         <AppStatCard
-            v-model="stateUserForm.muscle"
-            color="bg-orange-500/10 text-orange-500 dark:bg-orange-300/10 dark:text-orange"
-            icon="i-heroicons-user"
+            v-model="stateUserForm.muscleMass"
+            :profile-icon="PROFILE_ICONS.muscleMass"
             :editing="true"
             label="profile.form.bmi_label"
+            name="muscleMass"
+            type="number"
             :placeholder="$t('profile.form.bmi_label')"
             :trailing="true"
-            trailing-label="measurements.kg"
-            :value="profileData.muscle"
+            trailing-label=""
+            :value="userProfile.muscleMass"
         />
       </div>
 
@@ -180,43 +245,47 @@ async function onSubmitUserForm(event: FormSubmitEvent<UserFormSchema>) {
             <h2 class="text-3xl font-extrabold text-gray-800 dark:text-white mb-1">{{ $t('profile.bodyInformation.title') }}</h2>
             <p class="text-base text-gray-500 dark:text-gray-400 mt-2">{{ $t('profile.bodyInformation.description') }}</p>
           </div>
+
         </template>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <AppStatCard
               v-model="stateUserForm.chest"
-              color="bg-blue-500/10 text-blue-500 dark:bg-blue dark:text-blue-500"
-              icon="i-lucide-cake"
+              :profile-icon="PROFILE_ICONS.chest"
               :editing="true"
               label="profile.form.chest_label"
+              name="chest"
+              type="number"
               :placeholder="$t('profile.form.chest_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="profileData.chest"
+              :value="userProfile.chest"
           />
 
           <AppStatCard
               v-model="stateUserForm.hip"
-              color="bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-500"
-              icon="i-lucide-ruler"
+              :profile-icon="PROFILE_ICONS.hip"
               :editing="true"
               label="profile.form.hip_label"
+              name="hip"
+              type="number"
               :placeholder="$t('profile.form.hip_label')"
               :trailing="true"
               trailing-label="measurements.cm"
-              :value="profileData.hip"
+              :value="userProfile.hip"
           />
 
           <AppStatCard
               v-model="stateUserForm.waist"
-              color="bg-orange-500/10 text-orange-500 dark:bg-orange-300/10 dark:text-orange"
-              icon="i-heroicons-user"
+              :profile-icon="PROFILE_ICONS.waist"
               :editing="true"
               label="profile.form.waist_label"
+              name="waist"
+              type="number"
               :placeholder="$t('profile.form.waist_label')"
               :trailing="true"
               trailing-label="measurements.kg"
-              :value="profileData.waist"
+              :value="userProfile.waist"
           />
         </div>
 

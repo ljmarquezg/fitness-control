@@ -1,112 +1,199 @@
 {
+  "dashboard": {
+    "description": "Activity overview",
+    "navigationLabel": "Dashboard",
+    "newRecord": "Add new record",
+    "title": "Dashboard"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "languageChangedTo": "language updated to {language}",
+    "languageUpdated": "Language updated"
+  },
   "login": {
-    "title": "Log In",
     "description": "Enter your credentials to access your account.",
-    "form": {
-      "email_label": "Email",
-      "password_label": "Password",
-      "button": "Sign In"
+    "error": {
+      "message": "Login failed. Please check your credentials or try again later.",
+      "title": "Login Error"
     },
+    "form": {
+      "button": "Sign In",
+      "email_label": "Email",
+      "password_label": "Password"
+    },
+    "navigationLabel": "Login",
     "no_account": "Don't have an account?",
     "register_link": "Register",
-    "navigationLabel": "Login"
-  },
-  "register": {
-    "title": "Create Account",
-    "description": "Join our community in seconds. It's free!",
-    "form": {
-      "first_name_label": "First Name",
-      "last_name_label": "Last Name",
-      "email_label": "Email",
-      "password_label": "Password",
-      "button": "Register"
-    },
-    "have_account": "Already have an account?",
-    "login_link": "Log in",
     "success": {
-      "title": "Welcome {firstName} {lastName}",
-      "message": "Your account and profile were created successfully."
+      "message": "You have successfully logged in.",
+      "title": "Welcome back!"
     },
-    "error": {
-      "title": "Registration Error",
-      "message": "Registration failed. Please check your information or try again later."
-    },
-    "navigationLabel": "Register"
+    "title": "Log In"
   },
-  "dashboard": {
-    "title": "Dashboard",
-    "description": "Activity overview",
-    "newRecord": "Add new record",
-    "navigationLabel": "Dashboard"
+  "logout": {
+    "description": "You have been logged out.",
+    "error": {
+      "message": "Logout failed. Please try again later.",
+      "title": "Logout Error"
+    },
+    "navigationLabel": "Logout",
+    "success": {
+      "message": "You have successfully logged out.",
+      "title": "Goodbye!"
+    },
+    "title": "Logged Out",
+    "confirm": {
+      "title": "Confirm Logout",
+      "message": "Are you sure you want to log out?",
+      "confirmButton": "Yes, Log Out",
+      "cancelButton": "Cancel"
+    }
   },
   "measurements": {
-    "title": "Measurements",
-    "description": "Update your body measurements",
+    "actions": "Actions",
     "add_new": "Add new measurement",
-    "view_history": "View history",
-    "latest": "Latest measurement",
-    "no_data": "No measurements recorded yet.",
-    "date": "Date",
+    "age": "Age",
     "bmi": "BMI",
-    "weight": "Weight",
-    "waist": "Waist",
-    "hip": "Hip",
-    "chest": "Chest",
-    "muscle_mass": "Muscle Mass",
+    "bmi_categories": {
+      "normal_weight": "Normal weight",
+      "obesity": "Obesity",
+      "overweight": "Overweight",
+      "underweight": "Underweight"
+    },
     "body_fat": "Body Fat",
     "body_water": "Body Water",
     "bone_mass": "Bone Mass",
-    "height": "Height",
-    "age": "Age",
-    "actions": "Actions",
-    "edit": "Edit",
-    "delete": "Delete",
-    "confirm_delete": "Are you sure you want to delete this measurement?",
     "cancel": "Cancel",
-    "confirm": "Confirm",
+    "chest": "Chest",
     "cm": "cm",
-    "kg": "kg",
-    "lbs": "lbs",
+    "confirm": "Confirm",
+    "confirm_delete": "Are you sure you want to delete this measurement?",
+    "date": "Date",
+    "delete": "Delete",
+    "description": "Update your body measurements",
+    "edit": "Edit",
+    "ft-in": "ft-in",
+    "height": "Height",
+    "hip": "Hip",
     "inches": "inches",
-    "ft": "ft",
+    "kg": "kg",
+    "latest": "Latest measurement",
+    "lb": "lbs",
     "m": "m",
-    "bmi_categories": {
-      "underweight": "Underweight",
-      "normal_weight": "Normal weight",
-      "overweight": "Overweight",
-      "obesity": "Obesity"
-    }
+    "muscleMass": "Muscle Mass",
+    "no_data": "No measurements recorded yet.",
+    "title": "Measurements",
+    "view_history": "View history",
+    "waist": "Waist",
+    "weight": "Weight"
   },
   "profile": {
-    "personalInformation": {
-      "title": "Personal Information",
-      "description": "Actualice la información necesaria"
-    },
     "bodyInformation": {
-      "title": "Body Information",
-      "description": "Update your body measurements"
+      "description": "Update your body measurements",
+      "title": "Body Information"
     },
-    "title": "Perfíl",
     "form": {
-      "first_name_label": "First Name",
-      "last_name_label": "Last Name",
-      "email_label": "Email",
       "age_label": "Age",
-      "years": "years",
-      "years_old": "How old are you?",
-      "height_label": "Height",
-      "weight_label": "Weight",
       "bmi_label": "BMI",
-      "waist_label": "Waist",
-      "hip_label": "Hip",
-      "chest_label": "Chest",
-      "muscle_mass_label": "Muscle Mass",
       "body_fat_label": "Body Fat",
       "body_water_label": "Body Water",
       "bone_mass_label": "Bone Mass",
+      "button": "Update",
+      "chest_label": "Chest",
+      "email_label": "Email",
+      "first_name_label": "First Name",
+      "height_label": "Height",
+      "hip_label": "Hip",
+      "last_name_label": "Last Name",
+      "muscleMass_label": "Muscle Mass",
       "password_label": "Password",
-      "button": "Update"
+      "sex": {
+        "female": "Female",
+        "label": "Sex",
+        "male": "Male",
+        "other": "Other"
+      },
+      "waist_label": "Waist",
+      "weight_label": "Weight",
+      "years": "years",
+      "years_old": "How old are you?"
     },
-    "navigationLabel": "Profile"
+    "health_info": "Health Information",
+    "navigationLabel": "Profile",
+    "personalInformation": {
+      "completeNow": "Complete Now",
+      "description": "Actualice la información necesaria",
+      "incompleteProfileDescription": "Complete your profile by providing the necessary information.",
+      "incompleteProfileTitle": "Complete your profile",
+      "title": "Personal Information"
+    },
+    "sex": {
+      "female": "Female",
+      "label": "Sex",
+      "male": "Male",
+      "other": "Other"
+    },
+    "title": "Perfíl",
+    "updateFailure": "Profile update failed. Please try again later.",
+    "updateSuccess": "Profile updated successfully."
+  },
+  "register": {
+    "description": "Join our community in seconds. It's free!",
+    "error": {
+      "message": "Registration failed. Please check your information or try again later.",
+      "title": "Registration Error"
+    },
+    "form": {
+      "button": "Register",
+      "email_label": "Email",
+      "first_name_label": "First Name",
+      "last_name_label": "Last Name",
+      "password_label": "Password"
+    },
+    "have_account": "Already have an account?",
+    "login_link": "Log in",
+    "navigationLabel": "Register",
+    "success": {
+      "message": "Your account and profile were created successfully.",
+      "title": "Welcome {firstName} {lastName}"
+    },
+    "title": "Create Account"
+  },
+  "reports": {
+    "navigationLabel": "Reports",
+    "title": "Reports"
+  },
+  "settings": {
+    "description": "Manage your account settings and set preferences",
+    "form": {
+      "imperial": {
+        "height": "Feet/Inches (ft/in)",
+        "weight": "Pounds (lbs)"
+      },
+      "metric": {
+        "height": "Meters/Centimeters (m/cm)",
+        "weight": "Kilograms (kg)"
+      }
+    },
+    "measurement_units": {
+      "description": "Select your preferred measurement units",
+      "imperial": "Imperial (ft, in, lbs)",
+      "label": "Measurement Units",
+      "metric": "Metric (m, cm, kg)",
+      "title": "Measurement Units"
+    },
+    "navigationLabel": "Settings",
+    "title": "Settings",
+    "update": {
+      "error": {
+        "message": "Settings update failed. Please try again later.",
+        "title": "Update Error"
+      },
+      "success": {
+        "message": "Settings updated successfully.",
+        "title": "Success"
+      }
+    }
   }
 }

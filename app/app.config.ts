@@ -15,7 +15,7 @@ export default defineAppConfig({
       variants: {
         required: {
           true: {
-            label: "after:content-['*'] after:ms-0.5 after:text-error"
+            label: 'after:content-[\'*\'] after:ms-0.5 after:text-error'
           }
         }
       },
@@ -58,5 +58,18 @@ export default defineAppConfig({
         variant: 'outline'
       }
     },
+    button: {
+      slots: {
+        base: ['cursor-pointer']
+      }
+    }
   }
-})
+});
+
+export const toasterConfiguration = {
+  position: 'bottom-right',
+  expand: true,
+  duration: 5000,
+  hoverPause: true,
+  progress: true
+};
