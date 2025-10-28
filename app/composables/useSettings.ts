@@ -1,10 +1,13 @@
 import type { User } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { useAppUserSettingsState } from '~/composables/state/useAppUserSettingsState';
 import { useAppUserState } from '~/composables/state/useAppUserState';
 import { useFirebase } from '~/composables/useFirebase';
-import type { UserProfileData, UserSettings } from '~/schemas/profile/UserProfileSchema';
+import type { UserSettingsSchema } from '~/schemas/profile/UserProfileSchema';
 import type { UnitsPreferencesSchema } from '~/schemas/settings/UnitsSchema';
+import firebase from '~~/node_modules/firebase/compat';
+import QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot;
+import DocumentData = firebase.firestore.DocumentData;
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
 export const useSettingsTranslations = {
   weight: () => ({
@@ -30,17 +33,19 @@ export const useSettingsTranslations = {
 };
 
 export const useSettings = () => {
-  const toast = useNotifications();
+  const notifications = useNotifications();
   const {
-    currentUser,
     updateCurrentUserState
   } = useAppUserState();
   const {
     userSettings,
-    updateUserSettingsState
+    updateUserSettingsState,
   } = useAppUserSettingsState();
-  const { db } = useFirebase();
-  const isLoadingSettings = ref(false);
+  const {
+    getCollection,
+    setDocument
+  } = useFirestoreDatabase();
+  const isLoadingSettings: Ref<boolean> = ref(false);
 
   /**
    * Fetches the user settings from the Firestore database and updates the application state.
@@ -49,38 +54,28 @@ export const useSettings = () => {
    * @returns {Promise<void>} A promise that resolves when the user settings have been fetched and the state is updated.
    */
   const fetchUserSettings = async (): Promise<void> => {
-    const uid: string = currentUser?.value?.uid;
-    if (uid) {
-      isLoadingSettings.value = true;
-      try {
-        const settingsCollectionRef = collection(db, 'users', uid, 'settings');
-        const querySnapshot = await getDocs(settingsCollectionRef);
-        const settings: Record<string, any> = {};
+    isLoadingSettings.value = true;
+    try {
+      const querySnapshot: QuerySnapshot<UserSettingsSchema, UserSettingsSchema> = await getCollection('settings');
+      const settings: Record<string, UserSettingsSchema> = {};
 
-        querySnapshot.forEach((docSnap): coid => {
-          settings[docSnap.id] = docSnap.data();
-        });
+      querySnapshot.forEach((docSnap: QueryDocumentSnapshot<UserSettingsSchema>): void => {
+        settings[docSnap.id] = docSnap.data();
+      });
 
-        updateUserSettingsState(settings);
-      } catch (error) {
-        console.error('❌ Error fetching user settings:', error);
-        toast.error('Error cargando la configuración del usuario');
-      } finally {
-        isLoadingSettings.value = false;
-      }
+      updateUserSettingsState(settings);
+    } catch (error) {
+      console.error('❌ Error fetching user settings:', error);
+      notifications.error('Error cargando la configuración del usuario');
+    } finally {
+      isLoadingSettings.value = false;
     }
   };
 
   const updateUserSettings = async (settings: UnitsPreferencesSchema): Promise<void> => {
-    const user: User | UserProfileData = currentUser.value;
     isLoadingSettings.value = true;
     try {
-      if (!user) throw new Error('No user logged in');
-      const uid = user.uid;
-      const docRef = doc(db, 'users', uid, 'settings', 'measurements');
-      const snap = await getDoc(docRef);
-
-      await setDoc(docRef, {
+      await setDocument('settings', 'measurements', {
         ...settings,
         updatedAt: new Date().toISOString(),
       }, { merge: true });
@@ -94,24 +89,20 @@ export const useSettings = () => {
     }
   };
 
-  const updateUserPreferences = async (userSettings: UserSettings): Promise<void> => {
-    const user: UserProfileData = currentUser.value;
+  const updateUserPreferences = async (userSettings: UserSettingsSchema): Promise<void> => {
     isLoadingSettings.value = true;
     try {
-      if (!user) throw new Error('No user logged in');
-      const uid = user.uid;
-      const docRef = doc(db, 'users', uid, 'settings', 'preferences');
-      const snap = await getDoc(docRef);
+      alert();
+      const preferences = {
+        language: userSettings.preferences?.language
+      };
 
-      const preferences = { language: userSettings.preferences?.language };
-
-      await setDoc(docRef, {
+      await setDocument('settings', 'preferences', {
         ...preferences,
         updatedAt: new Date().toISOString(),
       }, { merge: true });
 
       updateCurrentUserState(userSettings);
-
     } catch (error) {
       console.error('❌ Error actualizando perfil:', error);
       throw error;

@@ -40,7 +40,7 @@ const weightItems = computed(() => [
 const { currentUser } = useAppUserState();
 const { userSettings } = useAppUserSettingsState();
 const { isLoadingSettings } = useUserProfile();
-const settings = useSettings();
+const { updateUserSettings } = useSettings();
 const emit = defineEmits(['saved']);
 const toast = useNotifications();
 
@@ -69,7 +69,7 @@ const ui = {
 
 async function onSubmitPreferencesForm(event: FormSubmitEvent<UserFormSchema>) {
   try {
-    await settings.updateUserSettings(event.data);
+    await updateUserSettings(event.data);
     toast.success('Success', 'Profile updated successfully.');
     emit('saved');
   } catch (error) {

@@ -44,7 +44,8 @@ export default defineNuxtConfig({
         file: 'es-ES.json'
       }
     ],
-    defaultLocale: 'es',
+    defaultLocale: 'en',
     lazy: true,
+    strategy: 'prefix_except_default',
   }
 })

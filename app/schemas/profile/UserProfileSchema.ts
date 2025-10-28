@@ -63,7 +63,7 @@ export interface MeasurementSettings {
   weightUnit?: WeightUnit;
 }
 
-export interface UserSettings {
+export interface UserSettingsSchema {
   measurements?: MeasurementSettings;
   preferences?: UserPreferences;
 }
@@ -79,7 +79,7 @@ export interface UserProfileData extends UserInfo {
   weight?: number;
   waist?: number;
   sex?: string;
-  settings: UserSettings;
+  settings: UserSettingsSchema;
 }
 
 export const userLoginFormSchema = z.object({
