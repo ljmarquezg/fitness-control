@@ -1,5 +1,5 @@
 import { EmailAuthProvider, reauthenticateWithCredential, updateProfile, type User, verifyBeforeUpdateEmail } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAppUserState } from '~/composables/state/useAppUserState';
 import { useFirebase } from '~/composables/useFirebase';
 import type { UserProfileData } from '~/schemas/profile/UserProfileSchema';
@@ -15,7 +15,7 @@ export const UserProfileFields: string[] = [
   'sex',
 ];
 
-export const  UserProfileExtendedFields = [
+export const UserProfileExtendedFields = [
   ...UserProfileFields,
   'displayName',
   'weight',
@@ -23,17 +23,21 @@ export const  UserProfileExtendedFields = [
   'chest',
   'hip',
   'waist',
-]
+];
 
 export const useUserProfile = () => {
-  const { db } = useFirebase();
+  const {
+    getDocument,
+    setDocument,
+    documentRef
+  } = useFirestoreDatabase();
   const {
     currentUser,
     updateCurrentUserState,
     clearCurrentUser,
   } = useAppUserState();
-  const toast = useNotifications();
-  const isLoadingProfile = useState<boolean>('isLoadingProfile', () => false);
+  const notifications = useNotifications();
+  const isLoadingProfile: Ref<boolean> = useState<boolean>('isLoadingProfile', (): boolean => false);
 
   /**
    * Fetches the user profile from Firestore and updates the local state.
@@ -52,9 +56,7 @@ export const useUserProfile = () => {
 
     try {
       const uid: string | undefined = user.uid;
-      const docRef = doc(db, 'users', uid);
-      const snap = await getDoc(docRef);
-
+      const snap = await getDocument();
       if (snap.exists()) {
         const snapData: UserProfileData = snap.data();
         if (!snapData?.displayName) {
@@ -69,12 +71,12 @@ export const useUserProfile = () => {
         updateCurrentUserState(userProfile);
         return userProfile;
       } else {
-        toast.info('No se encontró perfil, creando uno nuevo...');
+        notifications.info('No se encontró perfil, creando uno nuevo...');
         return null;
       }
     } catch (error) {
       console.error('❌ Error fetching profile:', error);
-      toast.error('Error cargando el perfil');
+      notifications.error('Error cargando el perfil');
     } finally {
       isLoadingProfile.value = false;
     }
@@ -85,7 +87,7 @@ export const useUserProfile = () => {
 
     isLoadingProfile.value = true;
     try {
-      const docRef = doc(db, 'users', user.uid);
+      const docRef = documentRef();
       const newProfile: UserProfileData = {
         uid: user.uid,
         email: user.email || '',
@@ -97,18 +99,18 @@ export const useUserProfile = () => {
         ...additionalData
       };
 
-      await setDoc(docRef, newProfile);
-      currentUser.value = newProfile;
+      await setDocument(docRef, newProfile);
+      updateCurrentUserState(newProfile);
     } catch (error) {
       console.error('❌ Error creating user profile:', error);
-      toast.error('Error creando el perfil del usuario');
+      notifications.error('Error creando el perfil del usuario');
       throw error;
     } finally {
       isLoadingProfile.value = false;
     }
   };
 
-  const updateUserEmail = async (newEmail: string, currentPassword) => {
+  const updateUserEmail = async (newEmail: string, currentPassword): Promise<void> => {
     const user: UserProfileData = currentUser.value;
     if (!user) throw new Error('No hay usuario autenticado');
 
@@ -118,9 +120,9 @@ export const useUserProfile = () => {
 
       await verifyBeforeUpdateEmail(user, newEmail);
       await currentUser?.value?.reload();
-      toast.success('Correo actualizado correctamente');
+      notifications.success('Correo actualizado correctamente');
     } catch (error) {
-      toast.error('Error actualizando el correo:', error);
+      notifications.error('Error actualizando el correo:', error);
       throw error;
     }
   };
@@ -134,9 +136,9 @@ export const useUserProfile = () => {
    * @throws {Error} Throws an error if no user is logged in or if the update process fails.
    * @returns {Promise<void>} Resolves when the profile is successfully updated.
    */
-  const updateUserProfile = async (data: Record<string, any>): Promise<UserProfileData> => {
+  const updateUserProfile = async (data: Record<string, UserProfileData>): Promise<UserProfileData> => {
     isLoadingProfile.value = true;
-    const user: User | UserProfileData = currentUser.value;
+    const user: UserProfileData = currentUser.value;
     try {
       if (!user) throw new Error('No user logged in');
 
@@ -155,7 +157,7 @@ export const useUserProfile = () => {
       );
       delete cleanData.email;
 
-      await setDoc(doc(db, 'users', uid), {
+      await setDocument('users', uid, {
         ...cleanData,
         updatedAt: new Date().toISOString(),
       }, { merge: true });
@@ -166,20 +168,20 @@ export const useUserProfile = () => {
 
     } catch (error) {
       console.error('❌ Error actualizando perfil:', error);
-      toast.error('Error actualizando el perfil');
+      notifications.error('Error actualizando el perfil');
       throw error;
     } finally {
       isLoadingProfile.value = false;
     }
   };
 
-  const clearProfile = () => {
+  const clearProfile = (): void => {
     clearCurrentUser(null);
   };
 
   const isUserProfileCompleted = (): boolean => {
     const user: UserProfileData = currentUser?.value;
-    if(!user?.uid) return false;
+    if (!user?.uid) return false;
     return UserProfileFields.every((field: string) => {
       const value = user[field];
       return value !== undefined && value !== null && value !== '';
